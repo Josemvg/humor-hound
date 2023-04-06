@@ -1,7 +1,10 @@
 import os
 
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedShuffleSplit
+from tensorflow import keras
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 
 def train_test_split(df: pd.DataFrame, target: str, test_size: float = 0.2, random_state: int = 2023):
@@ -41,3 +44,46 @@ def train_test_split(df: pd.DataFrame, target: str, test_size: float = 0.2, rand
     return X_train, y_train, X_test, y_test
 
 
+def tokenization(tokenizer: keras.preprocessing.text.Tokenizer, X_train: pd.Series, X_test: pd.Series, col: str) -> tuple[np.ndarray, np.ndarray, int, int]:
+    """
+    Tokenizes a column of a dataframe by applying: tokenization, sequencing and padding. 
+
+    Args:
+    -------
+    tokenizer: keras.preprocessing.text.Tokenizer
+        Tokenizer to use.
+    X_train: pd.Series
+        Train dataframe.
+    X_test: pd.Series
+        Test dataframe.
+    col: str
+        Name of the column to tokenize.
+
+    Returns:
+    -------
+    train_padded: np.array
+        Padded train sequences.
+    test_padded: np.array
+        Padded test sequences.
+    max_seq_len: int
+        Length of the longest sequence.
+    vocab_size: int
+        Size of the vocabulary.
+    """
+    # Fit tokenizer on train set
+    tokenizer.fit_on_texts(X_train[col])
+
+    # Conver text to sequences for both train and test sets
+    train_sequences = tokenizer.texts_to_sequences(X_train["headline"])
+    test_sequences = tokenizer.texts_to_sequences(X_test["headline"])
+
+    # Get lenght of the longest sequence
+    max_seq_len = max([len(seq) for seq in train_sequences])
+    # Get vocabulary size
+    vocab_size = len(tokenizer.word_index) + 1
+    
+    # Applying padding to both train and test sets
+    train_padded = pad_sequences(train_sequences, maxlen=max_seq_len, padding="post")
+    test_padded = pad_sequences(test_sequences, maxlen=max_seq_len, padding="post")
+
+    return train_padded, test_padded, max_seq_len, vocab_size
