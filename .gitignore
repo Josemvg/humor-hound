@@ -139,3 +139,5 @@ lightning_logs/
 
 # Logs folder
 logs/
+# Results folder
+results/
