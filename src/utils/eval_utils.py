@@ -1,25 +1,4 @@
-import os
-import re
-import json
 import matplotlib.pyplot as plt
-import seaborn as sns
-
-def load_json(file_path: str):
-    """
-    Loads a JSON file.
-
-    Args:
-    -------
-    file_path: str
-        Path to the JSON file.
-    
-    Returns:
-    -------
-    generator
-    """
-    for l in open(file_path, "r"):
-        yield json.loads(l)
-
 
 def plot_metric_curves(epochs, train_curve, val_curve, train_color, val_color, metric):
     """
@@ -44,7 +23,6 @@ def plot_metric_curves(epochs, train_curve, val_curve, train_color, val_color, m
     -------
     None
     """
-    sns.set_theme()
     plt.figure(figsize=(15,10), dpi=200)
     plt.plot(epochs, train_curve, color=train_color, linewidth=2, label=f'Training {metric.lower()}')
     plt.plot(epochs, val_curve, color=val_color, linewidth=2, label=f'Validation {metric.lower()}')
