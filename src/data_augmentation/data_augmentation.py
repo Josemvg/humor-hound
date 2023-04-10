@@ -20,6 +20,9 @@ FOX_NEWS_URL = 'https://www.foxnews.com/'
 NY_TIMES_URL = 'https://www.nytimes.com/'
 TELEGRAPH_URL = 'https://www.telegraph.co.uk/'
 USNEWS_URL = 'https://www.usnews.com/'
+ATHLETIC_URL = "https://theathletic.com/uk/"
+GUARDIAN_UK_URL = "https://www.theguardian.com/uk-news"
+GUARDIAN_US_URL = "https://www.theguardian.com/us-news"
 
 # Directories
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -150,6 +153,21 @@ class Data_augmentation:
             'Telegraph':{
                 'url': TELEGRAPH_URL,
                 'getter': scrape_telegraph_titles,
+                'label': 0
+            },
+            'Athletic':{
+                'url': ATHLETIC_URL,
+                'getter': scrape_athletic_titles,
+                'label': 0
+            },
+            'Guardian':{
+                'url': GUARDIAN_UK_URL,
+                'getter': scrape_guardian_titles,
+                'label': 0
+            },
+            'Guardian':{
+                'url': GUARDIAN_UK_URL,
+                'getter': scrape_guardian_titles,
                 'label': 0
             }
         }
