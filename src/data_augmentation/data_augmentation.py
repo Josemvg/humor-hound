@@ -9,6 +9,15 @@ from utils.misc_utils import setup_logger
 from data_augmentation.scraper_real import *
 from data_augmentation.scraper_satirical import *
 
+# Directories
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+DATA_DIR = os.path.join(ROOT_DIR, 'data')
+LOG_DIR = os.path.join(ROOT_DIR, 'logs')
+
+# File names
+CSV_FILE_NAME = 'Sarcasm_Headlines_Dataset_v2.csv'
+OOS_CSV_FILE_NAME = 'Sarcasm_Headlines_Dataset_OOS.csv'
+
 # URLs for the news websites to scrape
 # Sarcastic websites
 THE_ONION_URL = 'https://www.theonion.com/breaking-news'
@@ -20,15 +29,52 @@ FOX_NEWS_URL = 'https://www.foxnews.com/'
 NY_TIMES_URL = 'https://www.nytimes.com/'
 TELEGRAPH_URL = 'https://www.telegraph.co.uk/'
 USNEWS_URL = 'https://www.usnews.com/'
+BBC_URL = 'https://www.bbc.com'
+FORBES_URL = 'https://www.forbes.com/ceo-network/?sh=45537f4a7813'
 
-# Directories
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-DATA_DIR = os.path.join(ROOT_DIR, 'data')
-LOG_DIR = os.path.join(ROOT_DIR, 'logs')
-
-# File names
-CSV_FILE_NAME = 'Sarcasm_Headlines_Dataset_v2.csv'
-OOS_CSV_FILE_NAME = 'Sarcasm_Headlines_Dataset_OOS.csv'
+# Create a dictionary of news websites and their url, getter, and label
+NEWS_WEBSITES_INFO = {
+    'The Onion':{
+        'url': THE_ONION_URL,
+        'getter': scrape_onion_titles,
+        'label': 1
+    },
+    'Big American News':{
+        'url': BIG_AMERICAN_NEWS_URL,
+        'getter': scrape_big_american_news_titles,
+        'label': 1
+    },
+    'Empire News':{
+        'url': EMPIRE_NEWS_URL,
+        'getter': scrape_empire_titles_page_num,
+        'label': 1
+    },
+    'Fox News':{
+        'url': FOX_NEWS_URL,
+        'getter': scrape_fox_news_titles,
+        'label': 0
+    },
+    'NY Times':{
+        'url': NY_TIMES_URL,
+        'getter': scrape_ny_times_titles,
+        'label': 0
+    },
+    'Telegraph':{
+        'url': TELEGRAPH_URL,
+        'getter': scrape_telegraph_titles,
+        'label': 0
+    },
+    'BBC':{
+        'url': BBC_URL,
+        'getter': scrape_bbc_titles,
+        'label': 0
+    },
+    'Forbes':{
+        'url': FORBES_URL,
+        'getter': scrape_forbes_titles,
+        'label': 0
+    }
+}
 
 class Data_augmentation:
     """
@@ -93,7 +139,7 @@ class Data_augmentation:
             else:
                 # Connect to the news website and create a BeautifulSoup object from the HTML
                 response = requests.get(url)
-                soup = BeautifulSoup(response.text, 'html.parser')
+                soup = BeautifulSoup(response.text, 'lxml') if url in [BBC_URL, FORBES_URL] else BeautifulSoup(response.text, 'html.parser')    
 
                 # Extract article titles from the HTML
                 article_titles = getter(soup)
@@ -120,43 +166,9 @@ class Data_augmentation:
             A pandas DataFrame containing the article titles, the news website they 
             came from, and their label (whether they are real or satirical).
         """
-        # Create a dictionary of news websites and their url, getter, and label
-        news_websites_info = {
-            'The Onion':{
-                'url': THE_ONION_URL,
-                'getter': scrape_onion_titles,
-                'label': 1
-            },
-            'Big American News':{
-                'url': BIG_AMERICAN_NEWS_URL,
-                'getter': scrape_big_american_news_titles,
-                'label': 1
-            },
-            'Empire News':{
-                'url': EMPIRE_NEWS_URL,
-                'getter': scrape_empire_titles_page_num,
-                'label': 1
-            },
-            'Fox News':{
-                'url': FOX_NEWS_URL,
-                'getter': scrape_fox_news_titles,
-                'label': 0
-            },
-            'NY Times':{
-                'url': NY_TIMES_URL,
-                'getter': scrape_ny_times_titles,
-                'label': 0
-            },
-            'Telegraph':{
-                'url': TELEGRAPH_URL,
-                'getter': scrape_telegraph_titles,
-                'label': 0
-            }
-        }
-
         # Get the article titles from the web
         website_dfs = []
-        for website_name, website_info in news_websites_info.items():
+        for website_name, website_info in NEWS_WEBSITES_INFO.items():
             website_titles = pd.DataFrame({
                 'headline': self.get_titles_from_page(url = website_info['url'], getter = website_info['getter']),
                 'label': website_info['label'],
