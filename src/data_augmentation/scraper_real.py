@@ -121,3 +121,35 @@ def scrape_forbes_titles(soup) -> list[str]:
     ]
 
     return article_titles
+
+def scrape_athletic_titles(soup) -> list[str]:
+    """
+    Scrape the front page of forbes.com for article titles.
+    Returns:
+    -------
+    article_titles: list[str]
+        A list of strings representing the titles of articles 
+        on the news page of The Athletic.
+    """
+    # Get every headline on the page
+    article_title_headlines = soup.find_all('p', class_="sc-30702b06-0 tfWzM")
+    # Extract article titles from the HTML
+    article_titles = [title.text.strip().replace('\n', '') for title in article_title_headlines]
+
+    return article_titles
+
+def scrape_guardian_titles(soup) -> list[str]:
+    """
+    Scrape the front page of forbes.com for article titles.
+    Returns:
+    -------
+    article_titles: list[str]
+        A list of strings representing the titles of articles 
+        on the news page of The Guardian.
+    """
+    # Get every headline on the page
+    article_title_headlines = soup.find_all('a', attrs={"data-link-name": "article"})
+    # Extract article titles from the HTML
+    article_titles = [title.text.strip().replace('\n', '') for title in article_title_headlines]
+
+    return article_titles

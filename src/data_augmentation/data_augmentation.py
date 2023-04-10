@@ -31,6 +31,9 @@ TELEGRAPH_URL = 'https://www.telegraph.co.uk/'
 USNEWS_URL = 'https://www.usnews.com/'
 BBC_URL = 'https://www.bbc.com'
 FORBES_URL = 'https://www.forbes.com/ceo-network/?sh=45537f4a7813'
+ATHLETIC_URL = "https://theathletic.com/uk/"
+GUARDIAN_UK_URL = "https://www.theguardian.com/uk-news"
+GUARDIAN_US_URL = "https://www.theguardian.com/us-news"
 
 # Create a dictionary of news websites and their url, getter, and label
 NEWS_WEBSITES_INFO = {
@@ -72,6 +75,21 @@ NEWS_WEBSITES_INFO = {
     'Forbes':{
         'url': FORBES_URL,
         'getter': scrape_forbes_titles,
+        'label': 0
+    },
+    'Athletic':{
+        'url': ATHLETIC_URL,
+        'getter': scrape_athletic_titles,
+        'label': 0
+    },
+    'Guardian US':{
+        'url': GUARDIAN_US_URL,
+        'getter': scrape_guardian_titles,
+        'label': 0
+    },
+    'Guardian UK':{
+        'url': GUARDIAN_UK_URL,
+        'getter': scrape_guardian_titles,
         'label': 0
     }
 }
