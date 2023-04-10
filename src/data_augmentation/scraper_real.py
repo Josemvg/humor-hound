@@ -1,6 +1,7 @@
 import re
 import html
 import unicodedata
+from typing import Callable
 
 def scrape_fox_news_titles(soup) -> list[str]:
     """
@@ -72,3 +73,69 @@ def scrape_telegraph_titles(soup) -> list[str]:
     ]
     
     return article_titles
+
+def scrape_bbc_titles(soup) -> list[str]:
+    """
+    Scrape the front page of BBC.com for article titles.
+
+    Returns:
+    -------
+    article_titles: list[str]
+        A list of strings representing the titles of articles 
+        on the news page of BBC.com.
+    """
+    # Get every headline on the page
+    article_title_headlines = soup.find_all('a', class_='media__link')
+    # Extract article titles from the HTML
+    article_titles = [title.text.strip().replace('\n', '') for title in article_title_headlines]
+    
+    return article_titles
+
+def scrape_forbes_titles(soup) -> list[str]:
+    """
+    Scrape the front page of forbes.com for article titles.
+
+    Returns:
+    -------
+    article_titles: list[str]
+        A list of strings representing the titles of articles 
+        on the news page of BBC.com.
+    """
+    # Get every headline on the page
+    article_title_headlines = soup.find_all('span')
+    # Extract article titles from the HTML
+    article_titles = [title.text.strip().replace('\n', '') for title in article_title_headlines]  
+
+    return article_titles
+
+def run_scraper(url: str, scraper: Callable) -> list[str]:
+    """
+    Runs specified scraper on URL for article titles.
+
+    Returns:
+    -------
+    article_titles: list[str]
+        A list of strings representing the titles of articles 
+        on the specified.
+    """
+    response = requests.get(url=url)
+    soup = BeautifulSoup(response.content, 'lxml')
+
+    article_titles = scraper(soup=soup)
+
+    return article_titles
+
+if __name__=='__main__':
+    import requests
+    import pandas as pd
+    from bs4 import BeautifulSoup
+    import numpy as np
+    url = "https://www.forbes.com/ceo-network/?sh=45537f4a7813"
+    forbes_article_titles = run_scraper(url=url, scraper=scrape_forbes_titles)
+    labels = np.ones(shape=len(forbes_article_titles), dtype=int)
+
+    # save to file
+    fobes_df = pd.DataFrame({"headlines": forbes_article_titles,
+                           "label": labels})
+    
+    fobes_df.to_csv('forbes_real.csv', sep=';')
