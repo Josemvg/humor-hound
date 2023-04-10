@@ -141,3 +141,6 @@ lightning_logs/
 logs/
 # Results folder
 results/
+
+# metafiles for debugging
+.vscode/
