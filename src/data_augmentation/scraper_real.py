@@ -1,7 +1,6 @@
 import re
 import html
 import unicodedata
-from typing import Callable
 
 def scrape_fox_news_titles(soup) -> list[str]:
     """
@@ -84,10 +83,15 @@ def scrape_bbc_titles(soup) -> list[str]:
         A list of strings representing the titles of articles 
         on the news page of BBC.com.
     """
+    # Define the words that should be excluded from the article titles
+    excluded_words = ('...','?')
     # Get every headline on the page
     article_title_headlines = soup.find_all('a', class_='media__link')
     # Extract article titles from the HTML
-    article_titles = [title.text.strip().replace('\n', '') for title in article_title_headlines]
+    article_titles = [
+        title.text.strip().replace('\n', '') for title in article_title_headlines
+        if not any(words in title.text.lower() for words in excluded_words)
+    ]
     
     return article_titles
 
@@ -101,14 +105,25 @@ def scrape_forbes_titles(soup) -> list[str]:
         A list of strings representing the titles of articles 
         on the news page of BBC.com.
     """
+    # Define translation table
+    excluded_words = ('subscribe', 'newsletters')
+    translation_table = str.maketrans({
+        '\n': '', 
+        '"': '',
+        '’': '\'',
+    })
     # Get every headline on the page
     article_title_headlines = soup.find_all('span')
     # Extract article titles from the HTML
-    article_titles = [title.text.strip().replace('\n', '') for title in article_title_headlines]  
+    article_titles = [
+        title.text.strip().translate(translation_table) for title in article_title_headlines
+        if not any(words in title.text.lower() for words in excluded_words)                  
+    ]
 
     return article_titles
 
 def scrape_athletic_titles(soup) -> list[str]:
+<<<<<<< HEAD
     """
     Scrape the front page of forbes.com for article titles.
 
@@ -143,33 +158,35 @@ def scrape_guardian_titles(soup) -> list[str]:
     return article_titles
 
 def run_scraper(url: str, scraper: Callable) -> list[str]:
+=======
+>>>>>>> 9e398eb5817aedb23bf31d84f4e402fe546b9a38
     """
-    Runs specified scraper on URL for article titles.
-
+    Scrape the front page of forbes.com for article titles.
     Returns:
     -------
     article_titles: list[str]
         A list of strings representing the titles of articles 
-        on the specified.
+        on the news page of The Athletic.
     """
-    response = requests.get(url=url)
-    soup = BeautifulSoup(response.content, 'lxml')
-
-    article_titles = scraper(soup=soup)
+    # Get every headline on the page
+    article_title_headlines = soup.find_all('p', class_="sc-30702b06-0 tfWzM")
+    # Extract article titles from the HTML
+    article_titles = [title.text.strip().replace('\n', '') for title in article_title_headlines]
 
     return article_titles
 
-if __name__=='__main__':
-    import requests
-    import pandas as pd
-    from bs4 import BeautifulSoup
-    import numpy as np
-    url = "https://www.forbes.com/ceo-network/?sh=45537f4a7813"
-    forbes_article_titles = run_scraper(url=url, scraper=scrape_forbes_titles)
-    labels = np.ones(shape=len(forbes_article_titles), dtype=int)
+def scrape_guardian_titles(soup) -> list[str]:
+    """
+    Scrape the front page of forbes.com for article titles.
+    Returns:
+    -------
+    article_titles: list[str]
+        A list of strings representing the titles of articles 
+        on the news page of The Guardian.
+    """
+    # Get every headline on the page
+    article_title_headlines = soup.find_all('a', attrs={"data-link-name": "article"})
+    # Extract article titles from the HTML
+    article_titles = [title.text.strip().replace('\n', '') for title in article_title_headlines]
 
-    # save to file
-    fobes_df = pd.DataFrame({"headlines": forbes_article_titles,
-                           "label": labels})
-    
-    fobes_df.to_csv('forbes_real.csv', sep=';')
+    return article_titles

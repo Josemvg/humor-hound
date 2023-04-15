@@ -74,8 +74,8 @@ def tokenization(tokenizer: keras.preprocessing.text.Tokenizer, X_train: pd.Seri
     tokenizer.fit_on_texts(X_train[col])
 
     # Conver text to sequences for both train and test sets
-    train_sequences = tokenizer.texts_to_sequences(X_train["headline"])
-    test_sequences = tokenizer.texts_to_sequences(X_test["headline"])
+    train_sequences = tokenizer.texts_to_sequences(X_train[col])
+    test_sequences = tokenizer.texts_to_sequences(X_test[col])
 
     # Get lenght of the longest sequence
     max_seq_len = max([len(seq) for seq in train_sequences])
@@ -86,7 +86,7 @@ def tokenization(tokenizer: keras.preprocessing.text.Tokenizer, X_train: pd.Seri
     train_padded = pad_sequences(train_sequences, maxlen=max_seq_len, padding="post")
     test_padded = pad_sequences(test_sequences, maxlen=max_seq_len, padding="post")
 
-    return train_padded, test_padded, max_seq_len, vocab_size
+    return train_padded, test_padded, max_seq_len, vocab_size, tokenizer
 
 def preprocess_text(text, contractions, stop_words, lemmatizer):
     """
