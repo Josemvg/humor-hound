@@ -147,3 +147,69 @@ def filter_words_by_frequency(text, word_freq, threshold=3):
     words = text.split()
     filtered_words = [word for word in words if word_freq.get(word, 0) > threshold]
     return " ".join(filtered_words)
+
+def load_glove_embeddings(path_to_glove_file: str) -> dict:
+    """
+    Loads GloVe embeddings.
+
+    Args:
+    -------
+    path_to_glove_file: str
+        Path to the GloVe embeddings file.
+
+    Returns:
+    -------
+    embeddings_index: dict
+        Dictionary where each key is a word and each value is the corresponding embedding.
+    """
+    embeddings_index = {}
+    with open(path_to_glove_file) as f:
+        for line in f:
+            word, coefs = line.split(maxsplit=1)
+            coefs = np.fromstring(coefs, "f", sep=" ")
+            embeddings_index[word] = coefs
+
+    return embeddings_index
+
+def create_embedding_matrix(embeddings_index: dict, tokenizer: keras.preprocessing.text.Tokenizer, num_tokens: int, embedding_dim: int) -> tuple[np.ndarray, int, int]:
+    """
+    Creates an embedding matrix.
+
+    Args:
+    -------
+    embeddings_index: dict
+        Dictionary where each key is a word and each value is the corresponding embedding.
+    tokenizer: keras.preprocessing.text.Tokenizer
+        Tokenizer to use.
+    num_tokens: int
+        Number of tokens.
+    embedding_dim: int
+        Dimension of the embeddings.
+
+    Returns:
+    -------
+    embedding_matrix: np.array
+        Embedding matrix.
+    hits: int
+        Number of words in the vocabulary that are also in the embeddings.
+    misses: int
+        Number of words in the vocabulary that are not in the embeddings.
+    """
+    # Initialize hits and misses to 0
+    # i) hits: number of words in the vocabulary that are also in the embeddings
+    # ii) misses: number of words in the vocabulary that are not in the embeddings
+    hits = 0
+    misses = 0
+    # Prepare embedding matrix
+    embedding_matrix = np.zeros((num_tokens, embedding_dim))
+    for word, i in tokenizer.word_index.items():
+        embedding_vector = embeddings_index.get(word)
+        if embedding_vector is not None:
+            # Words not found in embedding index will be all-zeros.
+            # This includes the representation for "padding" and "OOV"
+            embedding_matrix[i] = embedding_vector
+            hits += 1
+        else:
+            misses += 1
+
+    return embedding_matrix, hits, misses
