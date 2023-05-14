@@ -1,10 +1,9 @@
-# from starlette.requests import Request
-from fastapi import FastAPI, File, Query
-from starlette.responses import Response
+from fastapi import FastAPI, Query
 import functools
 from model import CNN
-from pydantic import BaseModel
-from typing import Optional
+import nltk
+nltk.download("stopwords")
+nltk.download("wordnet")
 
 app = FastAPI(
     title="Humor hound",
@@ -18,6 +17,7 @@ def load_model():
     return model
 
 model = load_model()
+
 
 @app.get("/")
 def read_root():

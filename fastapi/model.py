@@ -1,9 +1,6 @@
 import tensorflow as tf
 import numpy as np
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-import nltk
-# nltk.download("stopwords")
-# nltk.download("wordnet")
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import re
@@ -15,7 +12,7 @@ class CNN:
         # path_to_models = "fastapi/models/"
         self.model = self._load_model()
         self.tokenizer = self._load_tokenizer()
-        self.contractions = pd.read_csv("/home/carlota/Documents/humor-hound/data/Contractions.csv", sep=";")
+        self.contractions = pd.read_csv("./data/Contractions.csv", sep=";")
         self.stop_words = stopwords.words("english")
         self.lemmatizer = WordNetLemmatizer()
 

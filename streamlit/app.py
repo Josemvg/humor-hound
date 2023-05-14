@@ -14,7 +14,7 @@ st.markdown("""
             """)
 
 # fastapi endpoint
-url = 'http://127.0.0.1:8000'
+url = 'http://fastapi:8000'
 endpoint = '/predict'
 
 @st.cache_data(show_spinner="Analyzing headline...")
