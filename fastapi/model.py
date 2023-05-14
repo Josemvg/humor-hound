@@ -59,7 +59,7 @@ class CNN:
 
         predictions = self.model.predict(sequence_text)
 
-        return str(np.mean(predictions))
+        return str(np.min(predictions))
     
 if __name__=="__main__":
     model = CNN()
