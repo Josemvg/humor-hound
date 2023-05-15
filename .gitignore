@@ -128,12 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Data Folder
-data/
-
-# Models Folder
-models/
-
 # Pytorch Lightning Logs
 lightning_logs/
 
