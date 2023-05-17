@@ -163,7 +163,7 @@ def load_glove_embeddings(path_to_glove_file: str) -> dict:
         Dictionary where each key is a word and each value is the corresponding embedding.
     """
     embeddings_index = {}
-    with open(path_to_glove_file) as f:
+    with open(path_to_glove_file, encoding="utf8") as f:
         for line in f:
             word, coefs = line.split(maxsplit=1)
             coefs = np.fromstring(coefs, "f", sep=" ")
