@@ -138,3 +138,9 @@ results/
 
 # metafiles for debugging
 .vscode/
+
+# Models folder
+models/
+
+# data folder
+data/
